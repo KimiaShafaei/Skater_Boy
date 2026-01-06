@@ -197,13 +197,13 @@ public class SkaterBalance : MonoBehaviour
         }
     }
 
-    // void OnCollisionEnter(Collision collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Ground"))
-    //     {
-    //         GameOver.Instance.ShowGameOver();
-    //     }
-    // }
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            GameOver.Instance.ShowGameOver();
+        }
+    }
 
     void OnDisable()
     {

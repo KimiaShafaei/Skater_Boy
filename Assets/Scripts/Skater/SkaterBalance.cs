@@ -17,7 +17,6 @@ public class SkaterBalance : MonoBehaviour
     public float maxTurnAngle = 35f;
     private float currentTurnAngle = 0f;
 
-    // Filter settings for smoother accelerometer data
     [SerializeField] private float accelerometerSmoothTime = 0.1f;
     private Vector3 filteredAcceleration;
     private Vector3 accelerationVelocity;
@@ -28,17 +27,20 @@ public class SkaterBalance : MonoBehaviour
     public float baseForce = 0.5f;
     public float forceGrowMul = 0.2f;
     public float maxForce = 20f;
+    public float forceLeanAngle = 8f;
+    public float forceLeanReturnSpeed = 4f;
     private float totalDistance = 0f;
     private float distanceTraveled = 0f;
+    private float forceLeanOffset = 0f;
+
+    [Header("Forcing Timing")]
+    public float minForceInterval = 1f;
+    private float lastForceTime = -999f;
     Vector3 lastPosition;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // Enable accelerometer using Input System
         InputSystem.EnableDevice(Accelerometer.current);
-        
-        // Wait for one frame to get stable accelerometer reading
         Invoke(nameof(SetInitialAcceleration), 0.1f);
 
         rb = GetComponent<Rigidbody>();
@@ -57,15 +59,13 @@ public class SkaterBalance : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // ApplyWobble();
+        ApplyWobble();
         ApplyTilt();
         ApplyRotation();
         UpdateVisuals();
         ApplyRandomForce();
-        CheckFall();   
     }
 
     void ApplyWobble()
@@ -77,11 +77,8 @@ public class SkaterBalance : MonoBehaviour
     void ApplyTilt()
     {
         if (Accelerometer.current == null) return;
-
-        // Read raw accelerometer data
         Vector3 rawAcceleration = Accelerometer.current.acceleration.ReadValue();
         
-        // Apply low-pass filter for smoother movement
         filteredAcceleration = Vector3.SmoothDamp(
             filteredAcceleration, 
             rawAcceleration, 
@@ -89,21 +86,15 @@ public class SkaterBalance : MonoBehaviour
             accelerometerSmoothTime
         );
 
-        // Calculate tilt from x-axis (landscape left/right tilt)
-        // In portrait mode, you might want to use y-axis instead
         float tilt = filteredAcceleration.x - initialAcceleration.x;
         
-        // Adjust sensitivity and deadzone
         float deadzone = 0.05f;
         if (Mathf.Abs(tilt) < deadzone)
         {
             tilt = 0f;
         }
         
-        // Map tilt to balance with sensitivity
         float targetBalance = Mathf.Clamp(tilt * tiltStrength, -maxBalance, maxBalance);
-        
-        // Smoothly move toward target balance
         balance = Mathf.MoveTowards(balance, targetBalance, Time.deltaTime * 3f);
         
         // Update debug text if available
@@ -127,7 +118,6 @@ public class SkaterBalance : MonoBehaviour
         float deadzone = 0.05f;
         if (Mathf.Abs(tilt) < deadzone)
         {
-            // Smoothly return to center
             currentTurnAngle = Mathf.MoveTowards(
                 currentTurnAngle,
                 0f,
@@ -136,7 +126,6 @@ public class SkaterBalance : MonoBehaviour
         }
         else
         {
-            // Convert tilt into a TARGET angle instead of endless rotation
             float targetAngle = Mathf.Clamp(
                 tilt * maxTurnAngle,
                 -maxTurnAngle,
@@ -149,16 +138,27 @@ public class SkaterBalance : MonoBehaviour
                 turnSpeed * Time.deltaTime
             );
         }
-
-        // Apply rotation ABSOLUTELY, not incrementally
         transform.rotation = Quaternion.Euler(0f, currentTurnAngle, 0f);
     }
+
     void UpdateVisuals()
     {
         float normalized = Mathf.Clamp(balance / maxBalance, -1f, 1f);
-        float targetAngle = -normalized * maxLeanAngle;
-        targetAngle = Mathf.Clamp(targetAngle, -maxLeanAngle, maxLeanAngle);
-        visuals.localRotation = Quaternion.Euler(0f, 0f, targetAngle);
+        float balanceLean = -normalized * maxLeanAngle;
+        if (Accelerometer.current != null)
+        {
+            float tilt = filteredAcceleration.x - initialAcceleration.x;
+            float deadzone = 0.05f;
+            if (Mathf.Abs(tilt) > deadzone)
+            {
+                forceLeanOffset = Mathf.MoveTowards(forceLeanOffset, 0f, Time.deltaTime * forceLeanReturnSpeed);
+                
+            }
+        }
+        float finalLean = balanceLean + forceLeanOffset;
+        finalLean = Mathf.Clamp(finalLean, -maxLeanAngle, maxLeanAngle);
+        visuals.localRotation = Quaternion.Euler(0f, 0f, finalLean);
+
     }
 
     void ApplyRandomForce()
@@ -168,46 +168,26 @@ public class SkaterBalance : MonoBehaviour
         distanceTraveled += deltaDistance;
         totalDistance += deltaDistance;
 
-        if (distanceTraveled >= 10f)
+        if (distanceTraveled >= 10f && Time.time - lastForceTime >= minForceInterval)
         {
             distanceTraveled = 0f;
+            lastForceTime = Time.time;
             float direction = Random.value > 0.5f ? 1f : -1f;
             float currentForce = baseForce + (totalDistance * forceGrowMul);
             currentForce = Mathf.Min(currentForce, maxForce);
 
             Vector3 force = transform.right * direction * currentForce;
             rb.AddForce(force , ForceMode.Impulse);
+            forceLeanOffset = -direction * forceLeanAngle;
 
             // Debug.Log("apply random force: " + force + "with currentForce: " + currentForce);
         }
     }
-
-    void CheckFall()
-    {
-        if (Mathf.Abs(balance) >= maxBalance)
-        {
-            Debug.Log("Skater has fallen!");
-
-            // if (distanceScore != null)
-            // {
-            //     distanceScore.StopScoring();
-            // }
-
-            // enabled = false;
-        }
-    }
-
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
             GameOver.Instance.ShowGameOver();
         }
-    }
-
-    void OnDisable()
-    {
-        // Clean up when object is disabled
-        InputSystem.DisableDevice(Accelerometer.current);
     }
 }

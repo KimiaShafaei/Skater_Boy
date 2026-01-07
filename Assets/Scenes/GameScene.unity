@@ -2196,6 +2196,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 6269214909177009965, guid: f36f9f2a129194f14bd8f03c8ebc931d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 6269214909177009965, guid: f36f9f2a129194f14bd8f03c8ebc931d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -2205,7 +2209,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6269214909177009965, guid: f36f9f2a129194f14bd8f03c8ebc931d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 50
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 6269214909177009965, guid: f36f9f2a129194f14bd8f03c8ebc931d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2253,6 +2257,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 751909198160840963, guid: 724305e74b7a9428a8e5ace8d0892a54, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 751909198160840963, guid: 724305e74b7a9428a8e5ace8d0892a54, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -2262,7 +2270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 751909198160840963, guid: 724305e74b7a9428a8e5ace8d0892a54, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 149.3
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 751909198160840963, guid: 724305e74b7a9428a8e5ace8d0892a54, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2353,6 +2361,62 @@ PrefabInstance:
       propertyPath: m_Name
       value: Skater
       objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: maxForce
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: baseForce
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: turnSpeed
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: maxBalance
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: maxLeanAngle
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: maxTurnAngle
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: tiltStrength
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: forceLeanAngle
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: wobbleStrength
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: minForceInterval
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: forceLeanReturnSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: accelerometerSmoothTime
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8991911918446802594, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: maxSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8991911918446802594, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: distanceScore
+      value: 
+      objectReference: {fileID: 645217132}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

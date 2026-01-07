@@ -2,11 +2,30 @@ using UnityEngine;
 
 public class SkaterForwardMove : MonoBehaviour
 {
-    public float speed = 10f;
+    public float firstSpeed = 3f;
+    public float maxSpeed = 50f;
+    private int lastScore = 0;
+    private float currentSpeed;
+    public DistanceScore distanceScore;
 
-    // Update is called once per frame
+    void Start()
+    {
+        currentSpeed = firstSpeed;
+    }
+
     void Update()
     {
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        transform.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
+        
+        if (distanceScore.score > lastScore)
+        {
+            lastScore = Mathf.FloorToInt(distanceScore.score);
+            currentSpeed += 1f;
+            
+            if (currentSpeed >= maxSpeed)
+            {
+                currentSpeed = maxSpeed;
+            }
+        }
     }
 }

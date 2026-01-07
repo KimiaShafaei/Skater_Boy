@@ -7,7 +7,7 @@ public class DistanceScore : MonoBehaviour
     public float highScore;
     float startZ;
     bool isPlaying = true;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         startZ = transform.position.z;
@@ -15,7 +15,6 @@ public class DistanceScore : MonoBehaviour
         highScore = PlayerPrefs.GetFloat("HighScore", 0f);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!isPlaying) return;

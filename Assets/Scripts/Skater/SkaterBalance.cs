@@ -7,34 +7,51 @@ public class SkaterBalance : MonoBehaviour
     // public TMP_Text debugText;
     public Rigidbody rb;
     public Transform visuals;
-    private float balance = 0f;
-    public float maxBalance = 0.8f;
-    public float wobbleStrength = 0.4f;
-    public float tiltStrength = 2.5f;
 
-    public float maxLeanAngle = 25f;
+    public ForceAllertManager forceAllertManager;
+
+    [Header("Tilt Settings")]
+    public float tiltStrength = 2.5f;
+    public float tiltDeadzone = 0.08f;
+
+    public float tiltSensivity = 0.4f;
+    [SerializeField] private float accelerometerSmoothTime = 0.1f;
+    public float maxBalance = 0.8f;
+
+    [Header("Wobble Settings")]
+    public float wobbleStrength = 0.4f;
+
+    [Header("Turning")]
     public float turnSpeed = 20f;
     public float maxTurnAngle = 35f;
-    private float currentTurnAngle = 0f;
 
-    [SerializeField] private float accelerometerSmoothTime = 0.1f;
-    private Vector3 filteredAcceleration;
-    private Vector3 accelerationVelocity;
-    private Vector3 initialAcceleration;
-    private DistanceScore distanceScore;
+    [Header("Visual Lean")]
+    public float maxLeanAngle = 25f;
 
     [Header("Random Force")]
     public float baseForce = 0.5f;
     public float forceGrowMul = 0.2f;
     public float maxForce = 20f;
-    public float forceLeanAngle = 8f;
-    public float forceLeanReturnSpeed = 4f;
-    private float totalDistance = 0f;
-    private float distanceTraveled = 0f;
-    private float forceLeanOffset = 0f;
 
     [Header("Forcing Timing")]
     public float minForceInterval = 1f;
+
+    [Header("Force Visual Reaction")]
+    public float baseForceLeanAngle = 10f;
+    public float maxForceLeanAngle = 30f;
+    public float forceLeanAngleMul = 0.1f;
+    public float forceLeanReturnSpeed = 4f;
+
+    private Vector3 filteredAcceleration;
+    private Vector3 accelerationVelocity;
+    private Vector3 initialAcceleration;
+    private DistanceScore distanceScore;
+
+    private float balance = 0f;
+    private float currentTurnAngle = 0f;
+    private float totalDistance = 0f;
+    private float distanceTraveled = 0f;
+    private float forceLeanOffset = 0f;
     private float lastForceTime = -999f;
     Vector3 lastPosition;
     
@@ -86,16 +103,15 @@ public class SkaterBalance : MonoBehaviour
             accelerometerSmoothTime
         );
 
-        float tilt = filteredAcceleration.x - initialAcceleration.x;
+        float tilt = (filteredAcceleration.x - initialAcceleration.x) * tiltSensivity;
         
-        float deadzone = 0.05f;
-        if (Mathf.Abs(tilt) < deadzone)
+        if (Mathf.Abs(tilt) < tiltDeadzone)
         {
             tilt = 0f;
         }
         
         float targetBalance = Mathf.Clamp(tilt * tiltStrength, -maxBalance, maxBalance);
-        balance = Mathf.MoveTowards(balance, targetBalance, Time.deltaTime * 3f);
+        balance = Mathf.MoveTowards(balance, targetBalance, Time.deltaTime * 1.5f);
         
         // Update debug text if available
         // if (debugText != null)
@@ -113,10 +129,9 @@ public class SkaterBalance : MonoBehaviour
     {
         if (Accelerometer.current == null) return;
 
-        float tilt = filteredAcceleration.x - initialAcceleration.x;
+        float tilt = (filteredAcceleration.x - initialAcceleration.x) * tiltSensivity;
 
-        float deadzone = 0.05f;
-        if (Mathf.Abs(tilt) < deadzone)
+        if (Mathf.Abs(tilt) < tiltDeadzone)
         {
             currentTurnAngle = Mathf.MoveTowards(
                 currentTurnAngle,
@@ -148,8 +163,7 @@ public class SkaterBalance : MonoBehaviour
         if (Accelerometer.current != null)
         {
             float tilt = filteredAcceleration.x - initialAcceleration.x;
-            float deadzone = 0.05f;
-            if (Mathf.Abs(tilt) > deadzone)
+            if (Mathf.Abs(tilt) > tiltDeadzone)
             {
                 forceLeanOffset = Mathf.MoveTowards(forceLeanOffset, 0f, Time.deltaTime * forceLeanReturnSpeed);
                 
@@ -177,10 +191,27 @@ public class SkaterBalance : MonoBehaviour
             currentForce = Mathf.Min(currentForce, maxForce);
 
             Vector3 force = transform.right * direction * currentForce;
+
+
+            if (direction > 0)
+            {
+                forceAllertManager.ShowRightAllert();
+            }
+            else
+            {
+                forceAllertManager.ShowLeftAllert();
+            }
+
+
             rb.AddForce(force , ForceMode.Impulse);
-            forceLeanOffset = -direction * forceLeanAngle;
+
+            float calculateLeanAngle = baseForceLeanAngle + (currentForce - baseForce) * forceLeanAngleMul;
+            calculateLeanAngle = Mathf.Min(calculateLeanAngle , maxForceLeanAngle);
+            forceLeanOffset = -direction * calculateLeanAngle;
 
             // Debug.Log("apply random force: " + force + "with currentForce: " + currentForce);
+            // Debug.Log("force lean offset:   " + forceLeanOffset);
+
         }
     }
     void OnCollisionEnter(Collision collision)

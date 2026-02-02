@@ -13,6 +13,7 @@ public class SkaterBalance : MonoBehaviour
     [Header("Tilt Settings")]
     public float tiltStrength = 2.5f;
     public float tiltDeadzone = 0.08f;
+    public float boostTiltMultiplier = 1.2f;
 
     public float tiltSensivity = 0.4f;
     [SerializeField] private float accelerometerSmoothTime = 0.1f;
@@ -20,6 +21,7 @@ public class SkaterBalance : MonoBehaviour
 
     [Header("Wobble Settings")]
     public float wobbleStrength = 0.4f;
+    public float boostWobbleMultiplier = 2f;
 
     [Header("Turning")]
     public float turnSpeed = 20f;
@@ -46,6 +48,7 @@ public class SkaterBalance : MonoBehaviour
     private Vector3 accelerationVelocity;
     private Vector3 initialAcceleration;
     private DistanceScore distanceScore;
+    private SkaterForwardMove skaterForwardMove;
 
     private float balance = 0f;
     private float currentTurnAngle = 0f;
@@ -63,6 +66,7 @@ public class SkaterBalance : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         distanceScore = GetComponent<DistanceScore>();
+        skaterForwardMove = GetComponent<SkaterForwardMove>();
 
         lastPosition = transform.position;
     }
@@ -88,7 +92,12 @@ public class SkaterBalance : MonoBehaviour
     void ApplyWobble()
     {
         float wobble = Random.Range(-1f, 1f);
-        balance += wobble * wobbleStrength * Time.deltaTime;
+        float finalWobble = wobbleStrength;
+        if (skaterForwardMove != null && skaterForwardMove.isBoosting)
+        {
+            finalWobble *= boostWobbleMultiplier;
+        }
+        balance += wobble * finalWobble * Time.deltaTime;
     }
 
     void ApplyTilt()
@@ -104,6 +113,11 @@ public class SkaterBalance : MonoBehaviour
         );
 
         float tilt = (filteredAcceleration.x - initialAcceleration.x) * tiltSensivity;
+
+        if (skaterForwardMove != null && skaterForwardMove.isBoosting)
+        {
+            tilt *= boostTiltMultiplier;
+        }
         
         if (Mathf.Abs(tilt) < tiltDeadzone)
         {

@@ -9,6 +9,7 @@ public class SkaterBalance : MonoBehaviour
     public Transform visuals;
 
     public ForceAllertManager forceAllertManager;
+    public GameOver gameOver;
 
     [Header("Tilt Settings")]
     public float tiltStrength = 2.5f;
@@ -232,7 +233,7 @@ public class SkaterBalance : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            GameOver.Instance.ShowGameOver();
+            gameOver.ShowGameOver();
         }
     }
 }

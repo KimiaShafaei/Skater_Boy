@@ -11,6 +11,7 @@ public class DistanceScore : MonoBehaviour
     public float distance;
     public float score;
     public HighScoreData highScoreData = new HighScoreData();
+    public bool isNewRecord;
     float startZ;
     bool isPlaying = true;
 
@@ -48,11 +49,14 @@ public class DistanceScore : MonoBehaviour
     public void StopScoring()
     {
         isPlaying = false;
+        isNewRecord = false;
 
         for (int i = 0; i < highScoreData.scores.Length; i++)
         {
             if (score > highScoreData.scores[i])
             {
+                if (i == 0)
+                    isNewRecord = true;
                 for (int j = highScoreData.scores.Length - 1; j > i; j--)
                 {
                     highScoreData.scores[j] = highScoreData.scores[j - 1];

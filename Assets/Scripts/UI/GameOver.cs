@@ -6,9 +6,12 @@ public class GameOver : MonoBehaviour
 {
     public GameObject gameOverPanel;
     public TextMeshProUGUI finalScoreText;
-    public TextMeshProUGUI highScoreText;
     public DistanceScore distanceScore;
     public GameObject scoreText;
+    public GameObject newRecordText;
+
+    public TextMeshProUGUI[] rankTexts;
+    public TextMeshProUGUI[] scoreTexts;
 
     public void ShowGameOver()
     {
@@ -20,6 +23,8 @@ public class GameOver : MonoBehaviour
 
         ShowFinalScore();
         ShowHighScores();
+
+        newRecordText.SetActive(distanceScore.isNewRecord);
     }
 
     void ShowFinalScore()
@@ -29,13 +34,12 @@ public class GameOver : MonoBehaviour
 
     void ShowHighScores()
     {
-        highScoreText.text = "";
         float[] scores = distanceScore.highScoreData.scores;
 
         for (int i = 0; i < scores.Length; i++)
         {
-            string rank = GetRankName(i);
-            highScoreText.text += string.Format("{0,-8} {1,3}\n", rank, (int)scores[i]);
+            rankTexts[i].text = GetRankName(i);
+            scoreTexts[i].text = scores[i].ToString();
         }
     }
 

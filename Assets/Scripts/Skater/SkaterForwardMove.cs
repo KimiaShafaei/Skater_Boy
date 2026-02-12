@@ -24,14 +24,14 @@ public class SkaterForwardMove : MonoBehaviour
     void Update()
     {
         isBoosting = Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed;
-        float finalSpeedd = currentSpeed;
+        float finalSpeed = currentSpeed;
         if (isBoosting)
         {
-            finalSpeedd *= boostMultiplier;
-            Debug.Log("Boosting" + finalSpeedd);
+            finalSpeed *= boostMultiplier;
+            // Debug.Log("Boosting" + finalSpeed);
         }
         
-        transform.Translate(Vector3.forward * finalSpeedd * Time.deltaTime);
+        transform.Translate(Vector3.forward * finalSpeed * Time.deltaTime);
         
         if (distanceScore.score > lastScore)
         {

@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class SkaterBalance : MonoBehaviour
 {
@@ -38,6 +39,8 @@ public class SkaterBalance : MonoBehaviour
 
     [Header("Forcing Timing")]
     public float minForceInterval = 1f;
+    public float forceWarningDelay = 1.5f;
+    private bool isForcePending = false;
 
     [Header("Force Visual Reaction")]
     public float baseForceLeanAngle = 10f;
@@ -197,38 +200,49 @@ public class SkaterBalance : MonoBehaviour
         distanceTraveled += deltaDistance;
         totalDistance += deltaDistance;
 
-        if (distanceTraveled >= 10f && Time.time - lastForceTime >= minForceInterval)
+        if (distanceTraveled >= 10f && Time.time - lastForceTime >= minForceInterval && !isForcePending)
         {
             distanceTraveled = 0f;
             lastForceTime = Time.time;
-            float direction = Random.value > 0.5f ? 1f : -1f;
-            float currentForce = baseForce + (totalDistance * forceGrowMul);
-            currentForce = Mathf.Min(currentForce, maxForce);
 
-            Vector3 force = transform.right * direction * currentForce;
-
-
-            if (direction > 0)
-            {
-                forceAllertManager.ShowRightAllert();
-            }
-            else
-            {
-                forceAllertManager.ShowLeftAllert();
-            }
-
-
-            rb.AddForce(force , ForceMode.Impulse);
-
-            float calculateLeanAngle = baseForceLeanAngle + (currentForce - baseForce) * forceLeanAngleMul;
-            calculateLeanAngle = Mathf.Min(calculateLeanAngle , maxForceLeanAngle);
-            forceLeanOffset = -direction * calculateLeanAngle;
-
-            // Debug.Log("apply random force: " + force + "with currentForce: " + currentForce);
-            // Debug.Log("force lean offset:   " + forceLeanOffset);
-
+            StartCoroutine(ForceWithWarning());
         }
     }
+
+
+    IEnumerator ForceWithWarning()
+    {
+        isForcePending = true;
+
+        float direction = Random.value > 0.5f ? 1f : -1f;
+        float currentForce = baseForce + (totalDistance * forceGrowMul);
+        currentForce = Mathf.Min(currentForce, maxForce);
+
+        if (direction > 0)
+        {
+            forceAllertManager.ShowRightAllert();
+        }
+        else
+        {
+            forceAllertManager.ShowLeftAllert();
+        }
+
+        yield return new WaitForSeconds(forceWarningDelay);
+
+        Vector3 force = transform.right * direction * currentForce;
+        rb.AddForce(force , ForceMode.Impulse);
+
+        float calculateLeanAngle = baseForceLeanAngle + (currentForce - baseForce) * forceLeanAngleMul;
+        calculateLeanAngle = Mathf.Min(calculateLeanAngle , maxForceLeanAngle);
+        forceLeanOffset = -direction * calculateLeanAngle;
+
+        isForcePending = false;
+
+        Debug.Log("apply random force: " + force + "with currentForce: " + currentForce);
+        // Debug.Log("force lean offset:   " + forceLeanOffset);
+    }
+
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))

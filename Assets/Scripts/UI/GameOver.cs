@@ -17,6 +17,8 @@ public class GameOver : MonoBehaviour
     {
         distanceScore.StopScoring();
 
+        ShowHighestScore();
+
         Time.timeScale = 0f;
         gameOverPanel.SetActive(true);
         scoreText.SetActive(false);
@@ -41,6 +43,13 @@ public class GameOver : MonoBehaviour
             rankTexts[i].text = GetRankName(i);
             scoreTexts[i].text = scores[i].ToString();
         }
+    }
+
+    void ShowHighestScore()
+    {
+        float highestScore = distanceScore.highScoreData.scores[0];
+        PlayerPrefs.SetFloat("HighScore", highestScore);
+        PlayerPrefs.Save();
     }
 
     public void RestartGame()

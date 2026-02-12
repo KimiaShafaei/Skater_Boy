@@ -9,7 +9,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         float highScore = PlayerPrefs.GetFloat("HighScore", 0f);
-        highScoreText.text = "High Score: " + highScore;
+        highScoreText.text = "High Score: " + highScore.ToString("0");
     }
 
     public void PlayGame()

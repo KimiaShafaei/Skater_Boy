@@ -8,8 +8,7 @@ public class SkaterBalance : MonoBehaviour
     // public TMP_Text debugText;
     public Rigidbody rb;
     public Transform visuals;
-
-    public ForceAllertManager forceAllertManager;
+    private RandomForce randomForce;
     public GameOver gameOver;
 
     [Header("Tilt Settings")]
@@ -31,22 +30,7 @@ public class SkaterBalance : MonoBehaviour
 
     [Header("Visual Lean")]
     public float maxLeanAngle = 25f;
-
-    [Header("Random Force")]
-    public float baseForce = 0.5f;
-    public float forceGrowMul = 0.2f;
-    public float maxForce = 20f;
-
-    [Header("Forcing Timing")]
-    public float minForceInterval = 1f;
-    public float forceWarningDelay = 1.5f;
-    private bool isForcePending = false;
-
-    [Header("Force Visual Reaction")]
-    public float baseForceLeanAngle = 10f;
-    public float maxForceLeanAngle = 30f;
-    public float forceLeanAngleMul = 0.1f;
-    public float forceLeanReturnSpeed = 4f;
+    
 
     private Vector3 filteredAcceleration;
     private Vector3 accelerationVelocity;
@@ -56,11 +40,6 @@ public class SkaterBalance : MonoBehaviour
 
     private float balance = 0f;
     private float currentTurnAngle = 0f;
-    private float totalDistance = 0f;
-    private float distanceTraveled = 0f;
-    private float forceLeanOffset = 0f;
-    private float lastForceTime = -999f;
-    Vector3 lastPosition;
     
     void Start()
     {
@@ -71,8 +50,7 @@ public class SkaterBalance : MonoBehaviour
 
         distanceScore = GetComponent<DistanceScore>();
         skaterForwardMove = GetComponent<SkaterForwardMove>();
-
-        lastPosition = transform.position;
+        randomForce = GetComponent<RandomForce>();
     }
 
     void SetInitialAcceleration()
@@ -90,7 +68,6 @@ public class SkaterBalance : MonoBehaviour
         ApplyTilt();
         ApplyRotation();
         UpdateVisuals();
-        ApplyRandomForce();
     }
 
     void ApplyWobble()
@@ -178,71 +155,17 @@ public class SkaterBalance : MonoBehaviour
     {
         float normalized = Mathf.Clamp(balance / maxBalance, -1f, 1f);
         float balanceLean = -normalized * maxLeanAngle;
-        if (Accelerometer.current != null)
+        float forceLean = 0f;
+        if (randomForce != null)
         {
-            float tilt = filteredAcceleration.x - initialAcceleration.x;
-            if (Mathf.Abs(tilt) > tiltDeadzone)
-            {
-                forceLeanOffset = Mathf.MoveTowards(forceLeanOffset, 0f, Time.deltaTime * forceLeanReturnSpeed);
-                
-            }
+            forceLean = randomForce.ForceLeanOffset;
         }
-        float finalLean = balanceLean + forceLeanOffset;
+        float finalLean = balanceLean + forceLean;
         finalLean = Mathf.Clamp(finalLean, -maxLeanAngle, maxLeanAngle);
+
         visuals.localRotation = Quaternion.Euler(0f, 0f, finalLean);
 
     }
-
-    void ApplyRandomForce()
-    {
-        float deltaDistance = Vector3.Distance(transform.position, lastPosition);
-        lastPosition = transform.position;
-        distanceTraveled += deltaDistance;
-        totalDistance += deltaDistance;
-
-        if (distanceTraveled >= 10f && Time.time - lastForceTime >= minForceInterval && !isForcePending)
-        {
-            distanceTraveled = 0f;
-            lastForceTime = Time.time;
-
-            StartCoroutine(ForceWithWarning());
-        }
-    }
-
-
-    IEnumerator ForceWithWarning()
-    {
-        isForcePending = true;
-
-        float direction = Random.value > 0.5f ? 1f : -1f;
-        float currentForce = baseForce + (totalDistance * forceGrowMul);
-        currentForce = Mathf.Min(currentForce, maxForce);
-
-        if (direction > 0)
-        {
-            forceAllertManager.ShowRightAllert();
-        }
-        else
-        {
-            forceAllertManager.ShowLeftAllert();
-        }
-
-        yield return new WaitForSeconds(forceWarningDelay);
-
-        Vector3 force = transform.right * direction * currentForce;
-        rb.AddForce(force , ForceMode.Impulse);
-
-        float calculateLeanAngle = baseForceLeanAngle + (currentForce - baseForce) * forceLeanAngleMul;
-        calculateLeanAngle = Mathf.Min(calculateLeanAngle , maxForceLeanAngle);
-        forceLeanOffset = -direction * calculateLeanAngle;
-
-        isForcePending = false;
-
-        Debug.Log("apply random force: " + force + "with currentForce: " + currentForce);
-        // Debug.Log("force lean offset:   " + forceLeanOffset);
-    }
-
-
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))

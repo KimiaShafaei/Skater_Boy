@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4145194540413345673}
   - component: {fileID: 8991911918446802594}
   - component: {fileID: 3068666006948237365}
+  - component: {fileID: 8913505558563744833}
   - component: {fileID: 4543641147414223529}
   m_Layer: 0
   m_Name: Skater
@@ -100,7 +101,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c477fb91fd3b43e383ac18e55eb40a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkaterForwardMove
-  speed: 3
+  firstSpeed: 3
+  maxSpeed: 50
+  boostMultiplier: 1.5
+  distanceScore: {fileID: 0}
 --- !u!114 &3068666006948237365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,16 +119,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkaterBalance
   rb: {fileID: 4145194540413345673}
   visuals: {fileID: 91162399578857835}
+  gameOver: {fileID: 0}
+  tiltStrength: 2.5
+  tiltDeadzone: 0.08
+  boostTiltMultiplier: 1.2
+  tiltSensivity: 0.4
+  accelerometerSmoothTime: 0.1
   maxBalance: 0.8
   wobbleStrength: 0.4
-  tiltStrength: 2.5
-  maxLeanAngle: 15
+  boostWobbleMultiplier: 2
   turnSpeed: 10
   maxTurnAngle: 15
-  accelerometerSmoothTime: 0.1
-  baseForce: 0.5
-  forceGrowMul: 0.05
-  maxForce: 10
+  maxLeanAngle: 15
+--- !u!114 &8913505558563744833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504535391007490598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2789f6508d83a4fbcb95ed62f3a552e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RandomForce
+  rb: {fileID: 4145194540413345673}
+  visuals: {fileID: 91162399578857835}
+  forceAllertManager: {fileID: 0}
+  baseForce: 1
+  forceGrowMul: 0.01
+  maxForce: 8
+  minForceInterval: 5
+  forceWarningDelay: 1.5
+  baseForceLeanAngle: 5
+  maxForceLeanAngle: 20
+  forceLeanAngleMul: 3
+  forceLeanReturnSpeed: 10
 --- !u!114 &4543641147414223529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,7 +169,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DistanceScore
   distance: 0
   score: 0
-  highScore: 0
+  highScoreData:
+    scores:
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+  isNewRecord: 0
 --- !u!1 &2603328008255214359
 GameObject:
   m_ObjectHideFlags: 0

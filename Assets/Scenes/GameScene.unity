@@ -7055,6 +7055,10 @@ PrefabInstance:
       propertyPath: accelerometerSmoothTime
       value: 0.4
       objectReference: {fileID: 0}
+    - target: {fileID: 8913505558563744833, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: forceAllertManager
+      value: 
+      objectReference: {fileID: 405193773}
     - target: {fileID: 8991911918446802594, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: maxSpeed
       value: 30

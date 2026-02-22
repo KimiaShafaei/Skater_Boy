@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3068666006948237365}
   - component: {fileID: 8913505558563744833}
   - component: {fileID: 4543641147414223529}
+  - component: {fileID: 8765965128676607316}
   m_Layer: 0
   m_Name: Skater
   m_TagString: Untagged
@@ -58,10 +59,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 3.23
+  m_Radius: 1.1745636
+  m_Height: 3.905142
   m_Direction: 1
-  m_Center: {x: 0.12, y: 0.81, z: 0}
+  m_Center: {x: 0.23, y: 0.99, z: 0.79999995}
 --- !u!54 &4145194540413345673
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -131,6 +132,8 @@ MonoBehaviour:
   turnSpeed: 10
   maxTurnAngle: 15
   maxLeanAngle: 15
+  arenaMoveForce: 35
+  arenaMaxSpeed: 6
 --- !u!114 &8913505558563744833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,7 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RandomForce
   rb: {fileID: 4145194540413345673}
-  visuals: {fileID: 91162399578857835}
   forceAllertManager: {fileID: 0}
   baseForce: 1
   forceGrowMul: 0.01
@@ -177,6 +179,19 @@ MonoBehaviour:
     - 0
     - 0
   isNewRecord: 0
+--- !u!114 &8765965128676607316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504535391007490598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1852bc4b54d554c0e80da8604ccdee35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkaterStateManager
+  currentState: 0
 --- !u!1 &2603328008255214359
 GameObject:
   m_ObjectHideFlags: 0
@@ -229,8 +244,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3, y: 0.86, z: 2.68}
-  m_Center: {x: 0.09, y: 0, z: 0.75}
+  m_Size: {x: 1.3, y: 0.86, z: 3.28}
+  m_Center: {x: 0.09, y: 0, z: 0.6}
 --- !u!1 &8669134891881653636
 GameObject:
   m_ObjectHideFlags: 0

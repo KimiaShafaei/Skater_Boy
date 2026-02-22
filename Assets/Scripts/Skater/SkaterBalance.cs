@@ -30,7 +30,6 @@ public class SkaterBalance : MonoBehaviour
 
     [Header("Visual Lean")]
     public float maxLeanAngle = 25f;
-    
 
     private Vector3 filteredAcceleration;
     private Vector3 accelerationVelocity;
@@ -40,6 +39,7 @@ public class SkaterBalance : MonoBehaviour
 
     private float balance = 0f;
     private float currentTurnAngle = 0f;
+    private bool isDead = false;
     
     void Start()
     {
@@ -64,9 +64,24 @@ public class SkaterBalance : MonoBehaviour
 
     void Update()
     {
-        ApplyWobble();
-        ApplyTilt();
-        ApplyRotation();
+        if (SkaterStateManager.Instance.currentState == SkaterState.Rail)
+        {
+            ApplyWobble();
+            ApplyTilt();
+            ApplyRotation();
+        }
+
+        else if (SkaterStateManager.Instance.currentState == SkaterState.Arena)
+        {
+            if (skaterForwardMove != null)
+            {
+                skaterForwardMove.ApplyArenaHorizontalMovement();
+            }
+            ApplyWobble();
+            ApplyTilt();
+            ApplyRotation();
+        }
+
         UpdateVisuals();
     }
 
@@ -171,6 +186,34 @@ public class SkaterBalance : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             gameOver.ShowGameOver();
+        }
+
+        if (collision.gameObject.CompareTag("Arena"))
+        {
+            SkaterStateManager.Instance.currentState = SkaterState.Arena;
+            Debug.Log("Entered Arena");
+
+            SetInitialAcceleration();
+            balance = 0f;
+            filteredAcceleration = initialAcceleration;
+        }
+
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            gameOver.ShowGameOver();
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Arena"))
+        {
+            SkaterStateManager.Instance.currentState = SkaterState.Rail;
+            Debug.Log("Exited Arena - back to Rail");
+
+            SetInitialAcceleration();
+            balance = 0f;
+            filteredAcceleration = initialAcceleration;
         }
     }
 }

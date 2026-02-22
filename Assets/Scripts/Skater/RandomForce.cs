@@ -40,8 +40,11 @@ public class RandomForce : MonoBehaviour
 
     void Update()
     {
-        ApplyRandomForce();
-        forceLeanOffset = Mathf.MoveTowards(forceLeanOffset, 0f, Time.deltaTime * forceLeanReturnSpeed);
+        if (SkaterStateManager.Instance.currentState == SkaterState.Rail)
+        {
+            ApplyRandomForce();
+            forceLeanOffset = Mathf.MoveTowards(forceLeanOffset, 0f, Time.deltaTime * forceLeanReturnSpeed);    
+        }
     }
 
     void ApplyRandomForce()

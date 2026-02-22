@@ -12,13 +12,23 @@ public class SkaterForwardMove : MonoBehaviour
     public float boostMultiplier = 1.5f;
     public bool isBoosting {get; private set;}
 
+    [Header("Arena Movement")]
+    public float arenaMaxSpeed = 6f;
+    public float tiltSensivity = 0.4f;
+    public float tiltDeadzone = 0.08f;
+
     private int lastScore = 0;
     private float currentSpeed;
     public DistanceScore distanceScore;
+    private Vector3 initialAcceleration;
 
     void Start()
     {
         currentSpeed = firstSpeed;
+        if (Accelerometer.current != null)
+        {
+            initialAcceleration = Accelerometer.current.acceleration.ReadValue();
+        }
     }
 
     void Update()
@@ -43,5 +53,21 @@ public class SkaterForwardMove : MonoBehaviour
                 currentSpeed = maxSpeed;
             }
         }
+    }
+
+    public void ApplyArenaHorizontalMovement()
+    {
+        if (Accelerometer.current == null) return;
+
+        Vector3 rawAcceleration = Accelerometer.current.acceleration.ReadValue();
+        float tilt = (rawAcceleration.x - initialAcceleration.x) * tiltSensivity;
+        
+        if (Mathf.Abs(tilt) < tiltDeadzone)
+        {
+            tilt = 0f;
+        }
+        
+        float horizontalMovement = tilt * arenaMaxSpeed;
+        transform.Translate(Vector3.right * horizontalMovement * Time.deltaTime);
     }
 }

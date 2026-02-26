@@ -121,7 +121,8 @@ public class SkaterBalance : MonoBehaviour
         }
         
         float targetBalance = Mathf.Clamp(tilt * tiltStrength, -maxBalance, maxBalance);
-        balance = Mathf.MoveTowards(balance, targetBalance, Time.deltaTime * 1.5f);
+        // balance = Mathf.MoveTowards(balance, targetBalance, Time.deltaTime * 1.5f);
+        balance = Mathf.Lerp(balance, targetBalance, Time.deltaTime * 5f);
         
         // Update debug text if available
         // if (debugText != null)
@@ -198,22 +199,35 @@ public class SkaterBalance : MonoBehaviour
             filteredAcceleration = initialAcceleration;
         }
 
-        if (collision.gameObject.CompareTag("Obstacle"))
-        {
-            gameOver.ShowGameOver();
-        }
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Arena"))
+        if (collision.gameObject.CompareTag("Rail"))
         {
             SkaterStateManager.Instance.currentState = SkaterState.Rail;
-            Debug.Log("Exited Arena - back to Rail");
+            Debug.Log("back to Rail");
 
             SetInitialAcceleration();
             balance = 0f;
             filteredAcceleration = initialAcceleration;
         }
+
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            if (SkaterStateManager.Instance.currentState == SkaterState.Arena)
+            {
+                gameOver.ShowGameOver();
+            }
+        }
     }
+
+    // void OnCollisionExit(Collision collision)
+    // {
+        // if (collision.gameObject.CompareTag("Arena"))
+        // {
+        //     SkaterStateManager.Instance.currentState = SkaterState.Rail;
+        //     Debug.Log("Exited Arena - back to Rail");
+
+        //     SetInitialAcceleration();
+        //     balance = 0f;
+        //     filteredAcceleration = initialAcceleration;
+        // }
+    // }
 }

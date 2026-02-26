@@ -11,6 +11,11 @@ public class SkaterBalance : MonoBehaviour
     private RandomForce randomForce;
     public GameOver gameOver;
 
+    [Header("Balance Physics")]
+    public float springStrength = 12f;
+    public float damping = 4f;
+    public float tiltForce = 6f;
+
     [Header("Tilt Settings")]
     public float tiltStrength = 2.5f;
     public float tiltDeadzone = 0.08f;
@@ -39,8 +44,8 @@ public class SkaterBalance : MonoBehaviour
 
     private float balance = 0f;
     private float currentTurnAngle = 0f;
-    private bool isDead = false;
-    
+    private float balanceVelocity = 0f;
+
     void Start()
     {
         InputSystem.EnableDevice(Accelerometer.current);
@@ -66,8 +71,8 @@ public class SkaterBalance : MonoBehaviour
     {
         if (SkaterStateManager.Instance.currentState == SkaterState.Rail)
         {
-            ApplyWobble();
             ApplyTilt();
+            ApplyBalancePhysics();
             ApplyRotation();
         }
 
@@ -77,23 +82,12 @@ public class SkaterBalance : MonoBehaviour
             {
                 skaterForwardMove.ApplyArenaHorizontalMovement();
             }
-            ApplyWobble();
             ApplyTilt();
+            ApplyBalancePhysics();
             ApplyRotation();
         }
 
         UpdateVisuals();
-    }
-
-    void ApplyWobble()
-    {
-        float wobble = Random.Range(-1f, 1f);
-        float finalWobble = wobbleStrength;
-        if (skaterForwardMove != null && skaterForwardMove.isBoosting)
-        {
-            finalWobble *= boostWobbleMultiplier;
-        }
-        balance += wobble * finalWobble * Time.deltaTime;
     }
 
     void ApplyTilt()
@@ -120,9 +114,7 @@ public class SkaterBalance : MonoBehaviour
             tilt = 0f;
         }
         
-        float targetBalance = Mathf.Clamp(tilt * tiltStrength, -maxBalance, maxBalance);
-        // balance = Mathf.MoveTowards(balance, targetBalance, Time.deltaTime * 1.5f);
-        balance = Mathf.Lerp(balance, targetBalance, Time.deltaTime * 5f);
+        balanceVelocity += tilt * tiltForce * Time.deltaTime;
         
         // Update debug text if available
         // if (debugText != null)
@@ -134,6 +126,17 @@ public class SkaterBalance : MonoBehaviour
         //         $"Balance: {balance:F2}\n" +
         //         $"Tilt: {tilt:F2}\n";
         // }
+    }
+    void ApplyBalancePhysics()
+    {
+        float springForce = -balance * springStrength;
+        balanceVelocity += springForce * Time.deltaTime;
+
+        balanceVelocity *= Mathf.Exp(-damping * Time.deltaTime);
+
+        balance += balanceVelocity * Time.deltaTime;
+
+        balance = Mathf.Clamp(balance, -maxBalance, maxBalance);
     }
     
     void ApplyRotation()
@@ -152,13 +155,9 @@ public class SkaterBalance : MonoBehaviour
         }
         else
         {
-            float targetAngle = Mathf.Clamp(
-                tilt * maxTurnAngle,
-                -maxTurnAngle,
-                maxTurnAngle
-            );
+            float targetAngle = balance * maxTurnAngle;
 
-            currentTurnAngle = Mathf.MoveTowards(
+            currentTurnAngle = Mathf.Lerp(
                 currentTurnAngle,
                 targetAngle,
                 turnSpeed * Time.deltaTime
@@ -217,17 +216,4 @@ public class SkaterBalance : MonoBehaviour
             }
         }
     }
-
-    // void OnCollisionExit(Collision collision)
-    // {
-        // if (collision.gameObject.CompareTag("Arena"))
-        // {
-        //     SkaterStateManager.Instance.currentState = SkaterState.Rail;
-        //     Debug.Log("Exited Arena - back to Rail");
-
-        //     SetInitialAcceleration();
-        //     balance = 0f;
-        //     filteredAcceleration = initialAcceleration;
-        // }
-    // }
 }

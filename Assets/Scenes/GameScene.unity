@@ -1328,7 +1328,7 @@ MonoBehaviour:
   minArena: 1
   maxArena: 4
   minObstacles: 5
-  maxObstacles: 10
+  maxObstacles: 8
   obstacleY: 2
 --- !u!4 &529951086
 Transform:
@@ -7035,12 +7035,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
+      propertyPath: tiltForce
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: turnSpeed
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: maxBalance
-      value: 0.6
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: forceGrowMul
@@ -7056,7 +7060,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: tiltDeadzone
-      value: 0.09
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: tiltStrength
@@ -7064,7 +7068,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: tiltSensivity
-      value: 1
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: forceLeanAngle
@@ -7100,7 +7104,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3068666006948237365, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: accelerometerSmoothTime
-      value: 0.03
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 4145194540413345673, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: m_Constraints
@@ -7128,7 +7132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8991911918446802594, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: arenaMaxSpeed
-      value: 9
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8991911918446802594, guid: 525e965f03c5c48f4bd0962909a750ee, type: 3}
       propertyPath: distanceScore

@@ -128,6 +128,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 751909198160840963, guid: 724305e74b7a9428a8e5ace8d0892a54, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 751909198160840963, guid: 724305e74b7a9428a8e5ace8d0892a54, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.76
       objectReference: {fileID: 0}
@@ -137,7 +141,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 751909198160840963, guid: 724305e74b7a9428a8e5ace8d0892a54, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 112.8
       objectReference: {fileID: 0}
     - target: {fileID: 751909198160840963, guid: 724305e74b7a9428a8e5ace8d0892a54, type: 3}
       propertyPath: m_LocalRotation.w
@@ -497,6 +501,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 6269214909177009965, guid: f36f9f2a129194f14bd8f03c8ebc931d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 6269214909177009965, guid: f36f9f2a129194f14bd8f03c8ebc931d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -506,7 +514,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6269214909177009965, guid: f36f9f2a129194f14bd8f03c8ebc931d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 49
+      value: 98.2
       objectReference: {fileID: 0}
     - target: {fileID: 6269214909177009965, guid: f36f9f2a129194f14bd8f03c8ebc931d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -717,7 +725,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 63.82}
+  m_AnchoredPosition: {x: 0, y: 40.5}
   m_SizeDelta: {x: 627.1396, y: 285.3585}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1508431972
